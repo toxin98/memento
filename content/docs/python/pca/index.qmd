@@ -1,0 +1,15 @@
+---
+lastmod: 2025-09-17T13:00:00Z
+publishDate: 2025-09-12T10:00:00Z
+title: PCA Analysis
+tags: []
+---
+
+```{python}
+from sklearn.datasets import load_iris
+```
+
+# Load the Iris dataset
+```{python}
+iris = load_iris()
+```

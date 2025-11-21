@@ -1,0 +1,29 @@
+---
+lastmod: 2025-09-17T13:00:00Z
+publishDate: 2025-09-12T10:00:00Z
+title: Scatter plot
+tags: []
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+# penguin flipper length versus body mass
+penguins |>
+  ggplot(aes(x = flipper_len, y = body_mass)) +
+  geom_point(aes(color = species, 
+                 shape = species),
+             size = 2) +
+  scale_color_manual(values = c("darkorange","darkorchid","cyan4")) 
+```
+
+```{r}
+# penguin bill length versus bill depth
+ggplot(data = penguins, aes(x = bill_len, y = bill_dep)) +
+  geom_point(aes(color = species, 
+                 shape = species),
+             size = 2)  +
+  scale_color_manual(values = c("darkorange","darkorchid","cyan4"))
+```

@@ -1,0 +1,65 @@
+baseURL = 'https://jiayong.org/'
+languageCode = 'zh'
+title = 'JY MEMENTO'
+
+timeZone = "Asia/Shanghai"
+
+theme = 'hugo-theme-memento'
+
+ignoreFiles = [ "\\.qmd$", "\\.ipynb$", "\\.py$" ]
+[markup.goldmark.renderer]
+unsafe= true
+
+[frontmatter]
+  # necessary for extracting date from post filename
+  date = [':filename', ':default']
+
+[permalinks]
+[permalinks.page]
+  posts = "/posts/:2006-:01-:02-:slug/"
+  ephemera = "/ephemera/:2006/"
+
+[menus]
+  [[menus.main]]
+  name = "Home"
+  pageRef = "/"
+  weight = 10
+
+  [[menus.main]]
+  name = "Notes"
+  pageRef = "/docs"
+  weight = 20
+
+  [[menus.main]]
+  name = "Posts"
+  pageRef = "/posts"
+  weight = 30
+
+  [[menus.main]]
+  name = "Ephemera"
+  pageRef = "/ephemera"
+  weight = 40
+
+  [[menus.main]]
+  name = "Gallery"
+  pageRef = "/gallery"
+  weight = 50
+
+  [[menus.main]]
+  name = "Projects"
+  pageRef = "/projects"
+  weight = 60
+
+  [[menus.main]]
+  name = "About"
+  pageRef = "/about"
+  weight = 70
+
+[module]
+  [module.hugoVersion]
+    extended = false
+    min = '0.146.0'
+
+[params]
+  repo = "https://github.com/toxin98/memento"
+  logo = true

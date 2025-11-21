@@ -1,0 +1,23 @@
+public/
+.hugo_build.lock
+resources/
+
+# Quarto-generated files
+/.quarto/
+**/*.quarto_ipynb
+
+# private
+content/docs/feng-suihan-lab-docs/
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+.frontmatter/

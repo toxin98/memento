@@ -1,0 +1,49 @@
+---
+lastmod: 2025-09-17T13:00:00Z
+publishDate: 2025-09-12T10:00:00Z
+title: Bubble plot
+tags: []
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+head(penguins)
+```
+
+```{r}
+# Count penguins for each species / island
+penguins_count <- penguins |>
+  dplyr::count(species, island, .drop = FALSE)
+penguins_count
+```
+
+```{r}
+p1 <- penguins_count |>
+  ggplot(aes(x = island, y = species)) +
+  geom_point(aes(size = n), color = "steelblue", alpha = 0.7) +
+  theme_minimal()
+p1
+```
+
+```{r}
+p2 <- penguins_count |>
+  ggplot(aes(x = island, y = species)) +
+  geom_tile(fill = "white", color = "grey") +
+  geom_point(aes(size = n), color = "steelblue", alpha = 0.7) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank()
+  )
+p2
+```
+
+```{r}
+p1 + theme(panel.grid = element_blank())
+```
+
+```{r}
+p1 + scale_size_area(limits = c(1, max(penguins_count$n)))
+```

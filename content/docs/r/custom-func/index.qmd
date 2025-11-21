@@ -1,0 +1,130 @@
+---
+lastmod: 2025-09-17T13:00:00Z
+publishDate: 2025-09-12T10:00:00Z
+title: Useful custom R functions
+tags: []
+---
+
+## theme_nature
+
+```{r}
+# ggplot2 4.0.0 is required
+theme_nature <- function(base_size = 6,  # axis.title and legend.title will be 6 pt
+                         base_family = "sans",
+                         header_family = NULL,
+                         base_line_size = 0.5/(ggplot2::.pt*72.27/96),  # works with the geom parameter
+                         base_rect_size = 0.5/(ggplot2::.pt*72.27/96),  # works with the geom parameter
+                         ink = "black", paper = "white", accent = "#3366FF") {
+
+  use("scales", c("col_mix"))
+
+  margin_auto <- function(t = 0, r = t, b = t, l = r, unit = "pt") {
+    margin(t = t, r = r, b = b, l = l, unit = unit)
+  }
+
+  half_line <- base_size / 2
+
+  # Starts with theme_grey and then modify some parts
+  theme_grey(
+    base_size = base_size,
+    base_family = base_family,
+    header_family = header_family,
+    base_line_size = base_line_size,
+    base_rect_size = base_rect_size,
+    ink = ink, paper = paper, accent = accent
+  ) %+replace%
+    theme(
+
+      point =            element_point(
+                          colour = ink, shape = 19, fill = paper,
+                          size = (base_size / 6) * 1.5,
+                          stroke = base_line_size
+                         ),
+
+      geom =             element_geom(
+                          linewidth = base_line_size, borderwidth = base_line_size,
+                          linetype = 1L, bordertype = 1L,
+                          family = base_family, fontsize = base_size,
+                          pointsize = (base_size / 6) * 1.5, pointshape = 19
+                         ),
+
+      panel.background = element_rect(fill = paper, colour = NA),
+      panel.border     = element_blank(),
+      panel.grid       = element_blank(),
+
+      plot.title       = element_text(size = 7, hjust = 0.5, vjust = 1, margin = margin(b = half_line)),
+      axis.text        = element_text(size = 5, colour = ink),
+      legend.text      = element_text(size = 5),
+      legend.key.size  = unit(0.5, "picas"),  # Picas. 1 pc = 12 pt.
+
+      axis.line        = element_line(),
+      axis.ticks       = element_line(colour = ink),
+
+      strip.text       = element_text(size = 5, colour = ink, margin = margin_auto(0.8 * half_line)),
+      strip.background = element_rect(
+        fill   = col_mix(ink, paper, 0.851),
+        colour = col_mix(ink, paper, 0.2)
+      ),
+
+      complete = TRUE
+    )
+}
+```
+
+## Error bars for barplot only in one direction
+
+```{r}
+# https://stackoverflow.com/a/40409140/22331901
+GeomUperrorbar <- ggproto(
+  "GeomUperrorbar", Geom,
+  default_aes = aes(colour = "black", linewidth = 0.5, linetype = 1, width = 0.5, alpha = NA),
+  draw_key = draw_key_path,
+  required_aes = c("x", "y", "ymax"),
+  setup_data = function(data, params) {
+    data$width <- data$width %||%
+      params$width %||% (resolution(data$x, FALSE) * 0.9)
+    
+    transform(data,
+              xmin = x - width / 2, xmax = x + width / 2, width = NULL
+    )
+  },
+  draw_panel = function(data, panel_scales, coord, width = NULL) {
+    GeomPath$draw_panel(data.frame(
+      x = as.vector(rbind(data$xmin, data$xmax, NA, data$x,   data$x)),
+      y = as.vector(rbind(data$ymax, data$ymax, NA, data$ymax, data$y)),
+      colour = rep(data$colour, each = 5),
+      alpha = rep(data$alpha, each = 5),
+      linewidth = rep(data$linewidth, each = 5),
+      linetype = rep(data$linetype, each = 5),
+      group = rep(1:(nrow(data)), each = 5),
+      stringsAsFactors = FALSE,
+      row.names = 1:(nrow(data) * 5)
+    ), panel_scales, coord)
+  }
+)
+
+geom_uperrorbar <- function(mapping = NULL, data = NULL,
+                            stat = "identity", position = "identity",
+                            ...,
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomUperrorbar,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+
+"%||%" <- function(a, b) {
+  if (!is.null(a)) a else b
+}
+```

@@ -1,0 +1,8 @@
+---
+title: uv
+---
+
+
+``` shell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
