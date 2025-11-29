@@ -1,5 +1,8 @@
 ---
-LinkTitle: BP-pacFA protocol version 2
+lastmod: 2025-09-17T13:00:00.000Z
+publishDate: 2025-09-12T10:00:00.000Z
+title: BP-pacFA protocol version 2
+tags: []
 ---
 
 1. incubate with 10μM BP-pacFA in HBSS for 10min at 37°C
