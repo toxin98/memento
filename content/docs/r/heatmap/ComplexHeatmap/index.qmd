@@ -6,3 +6,24 @@ tags: []
 ---
 
 pheatmap的衍生
+
+
+```{r}
+# z-score normalization
+mat <- t(scale(t(mat1), center = TRUE, scale = TRUE))
+```
+
+
+```{r}
+# min-max normalization
+mat <- df |>
+  column_to_rownames("variable") |>
+  as.matrix() |>
+  t()
+
+normalize_minmax <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+mat <- apply(mat, MARGIN = 2, FUN = normalize_minmax)
+```
