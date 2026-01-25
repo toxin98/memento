@@ -1,0 +1,86 @@
+---
+lastmod: 2025-09-17T13:00:00.000Z
+publishDate: 2025-09-12T10:00:00.000Z
+title: ec50
+tags: []
+---
+
+```{r}
+library(magrittr)
+library(ggplot2)
+```
+
+```{r}
+# https://rpubs.com/russH/378543
+dose_response <- structure(list(conc = c(0, 0.1, 0.3, 1, 3, 10), cell_count = c(90.4476560412627, 
+  73.0426031727349, 59.8677345071323, 35.684936411427, 19.654121359138, 
+  13.2675099068359)), class = "data.frame", row.names = c(NA, -6L
+  ))
+
+p <- ggplot(
+  data = dose_response, aes(x = conc, y = cell_count)
+) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Drug Concentration", y = "Cell Count") +
+  ylim(0, NA)
+
+p
+
+p + scale_x_continuous(trans = "log10")
+
+
+## Fitting data to the EC50 equation
+
+library(drc)
+
+curved_fit <- drm(
+  formula = cell_count ~ conc,
+  data = dose_response,
+  fct = LL.4(names = c("hill", "min_value", "max_value", "ec_50"))
+)
+summary(curved_fit)
+
+
+coefs <- setNames(
+  curved_fit$coefficients,
+  c("hill", "min_value", "max_value", "ec_50")
+)
+
+ic_50 <- with(
+  as.list(coefs),
+  exp(
+    log(ec_50) + (1 / hill) * log(max_value / (max_value - 2 * min_value))
+  )
+)
+
+ic_50
+
+
+additional_data <- data.frame(
+  # This gives a sequence of 100 evenly spaced values between 0 and 10
+  conc = seq(0, 10, length.out = 100)
+)
+
+
+curved_counts <- predict(curved_fit, newdata = additional_data)
+
+
+
+curved_fitted_data <- data.frame(
+  additional_data,
+  cell_count = curved_counts
+)
+
+
+ggplot(dose_response, aes(x = conc, y = cell_count)) +
+  geom_point() +
+  geom_line(data = curved_fitted_data)
+
+
+
+# Note the logged x-axis
+plot(curved_fit)
+
+```
+
